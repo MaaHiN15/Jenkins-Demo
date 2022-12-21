@@ -5,7 +5,7 @@ pipeline{
     parameters{
         string(name: "USER", defaultValue: "Maahin", description: "")
         choice(name: "VERSION", choices: ["1.0", "2.0", "3.0"], description: "")
-        booleanParams(name: "executable", defaultValue: true, description: "")
+        booleanParam(name: "executable", defaultValue: true, description: "")
     }
     stages{
         stage("init"){
@@ -31,19 +31,14 @@ pipeline{
             }
             steps{
                 script{
+                    INPUT = input( message: "Select env for deploy", ok: "ok", parameters: [name: "ENV", choices: ["dev", "staging", "prod"], description: ""] )
                     gv.stageApp()
+                    echo "selected env ${INPUT}"
                 }
             }
         }
         stage("deploy"){
             steps{
-                input{
-                    message "Select the stages to deploy to"
-                    ok "ok"
-                    parameters {
-                        choice(name: "ENV", choices: ["dev", "prod", "staging"], description: "")
-                    }
-                }
                 script{
                     gv.deployApp()
                 }
